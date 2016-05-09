@@ -131,7 +131,7 @@ public class ImageSlideshow: UIView, UIScrollViewDelegate {
                 view.zoomOut()
             }
             view.frame = CGRectMake(scrollView.frame.size.width * CGFloat(i), 0, scrollView.frame.size.width, scrollView.frame.size.height)
-            i++
+            i += 1
         }
         
         setCurrentPage(currentPage, animated: false)
@@ -150,7 +150,7 @@ public class ImageSlideshow: UIView, UIScrollViewDelegate {
             item.imageView.contentMode = self.contentScaleMode
             slideshowItems.append(item)
             scrollView.addSubview(item)
-            i++
+            i += 1
         }
         
         if circular && (scrollViewImages.count > 1) {
@@ -209,11 +209,12 @@ public class ImageSlideshow: UIView, UIScrollViewDelegate {
     
     private func setTimerIfNeeded() {
         if slideshowInterval > 0 && scrollViewImages.count > 1 && slideshowTimer == nil {
-            slideshowTimer = NSTimer.scheduledTimerWithTimeInterval(slideshowInterval, target: self, selector: "slideshowTick:", userInfo: nil, repeats: true)
+            slideshowTimer = NSTimer.scheduledTimerWithTimeInterval(slideshowInterval, target: self, selector: #selector(ImageSlideshow.slideshowTick(_:)), userInfo: nil, repeats: true)
         }
     }
     
     func slideshowTick(timer: NSTimer) {
+        
         let page = Int(scrollView.contentOffset.x / scrollView.frame.size.width)
         var nextPage = page + 1
         
@@ -249,6 +250,17 @@ public class ImageSlideshow: UIView, UIScrollViewDelegate {
         } else {
             currentPage = page
         }
+    }
+    
+    /// Stops slideshow timer
+    public func pauseTimerIfNeeded() {
+        slideshowTimer?.invalidate()
+        slideshowTimer = nil
+    }
+    
+    /// Restarts slideshow timer
+    public func unpauseTimerIfNeeded() {
+        setTimerIfNeeded()
     }
     
     // MARK: UIScrollViewDelegate

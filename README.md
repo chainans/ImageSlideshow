@@ -33,7 +33,7 @@ ImageSlideshow is available through [CocoaPods](http://cocoapods.org). To instal
 it, simply add the following line to your Podfile:
 
 ```ruby
-pod 'ImageSlideshow', '~> 0.3'
+pod 'ImageSlideshow', '~> 0.4'
 ```
 
 ## Usage
@@ -113,8 +113,8 @@ func click() {
   ctr.initialPage = slideshow.scrollViewPage
   // set the inputs
   ctr.inputs = slideshow.images
-  self.transitionDelegate = ZoomAnimatedTransitioningDelegate(slideshowView: slideshow);
-  ctr.transitioningDelegate = self.transitionDelegate!
+  self.transitionDelegate = ZoomAnimatedTransitioningDelegate(slideshowView: slideshow, slideshowController: ctr)
+  ctr.transitioningDelegate = self.transitionDelegate
   self.presentViewController(ctr, animated: true, completion: nil)
 }
 ```
