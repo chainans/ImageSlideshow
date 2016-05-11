@@ -22,7 +22,7 @@ public class ImageSlideshow: UIView, UIScrollViewDelegate {
     public let scrollView = UIScrollView()
     public let pageControl = UIPageControl()
 
-    weak var delegate : ImageSlideshowDelegate?
+    public weak var delegate : ImageSlideshowDelegate?
     
     // state properties
     
