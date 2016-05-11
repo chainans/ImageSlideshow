@@ -13,7 +13,7 @@ import UIKit
     case UnderScrollView
 }
 
-protocol ImageSlideshowDelegate : class{
+public protocol ImageSlideshowDelegate : class {
     func currentPageDidChanged(currentPage : Int)
 }
 
