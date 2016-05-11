@@ -13,10 +13,16 @@ import UIKit
     case UnderScrollView
 }
 
+protocol ImageSlideshowDelegate : class{
+    func currentPageDidChanged(currentPage : Int)
+}
+
 public class ImageSlideshow: UIView, UIScrollViewDelegate {
     
     public let scrollView = UIScrollView()
     public let pageControl = UIPageControl()
+
+    weak var delegate : ImageSlideshowDelegate?
     
     // state properties
     
@@ -30,6 +36,9 @@ public class ImageSlideshow: UIView, UIScrollViewDelegate {
     public private(set) var currentPage: Int = 0 {
         didSet {
             pageControl.currentPage = currentPage;
+            if let d = delegate {
+                d.currentPageDidChanged(currentPage)
+            }
         }
     }
     
