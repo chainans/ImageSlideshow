@@ -101,6 +101,10 @@ public class ImageSlideshow: UIView, UIScrollViewDelegate {
         self.autoresizesSubviews = true
         self.clipsToBounds = true
         
+        // Allow adjusting UIPageControl color
+//        pageControl.pageIndicatorTintColor = [UIColor blueColor];
+        pageControl.currentPageIndicatorTintColor = UIColor(red: 142/255.0, green: 195/255.0, blue: 72/255.0, alpha: 1.0)
+        
         // scroll view configuration
         scrollView.frame = CGRectMake(0, 0, self.frame.size.width, self.frame.size.height - 50.0)
         scrollView.delegate = self
