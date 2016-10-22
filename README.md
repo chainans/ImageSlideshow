@@ -1,7 +1,8 @@
 # ImageSlideshow
 
-[![CI Status](http://img.shields.io/travis/zvonicek/ImageSlideshow.svg?style=flat)](https://travis-ci.org/zvonicek/ImageSlideshow)
+[![Build Status](https://www.bitrise.io/app/9aaf3e552f3a575c.svg?token=AjiVckTN9ItQtJs873mYMw&branch=master)](https://www.bitrise.io/app/9aaf3e552f3a575c)
 [![Version](https://img.shields.io/cocoapods/v/ImageSlideshow.svg?style=flat)](http://cocoapods.org/pods/ImageSlideshow)
+[![Carthage Compatible](https://img.shields.io/badge/Carthage-compatible-4BC51D.svg?style=flat)](https://github.com/Carthage/Carthage)
 [![License](https://img.shields.io/cocoapods/l/ImageSlideshow.svg?style=flat)](http://cocoapods.org/pods/ImageSlideshow)
 [![Platform](https://img.shields.io/cocoapods/p/ImageSlideshow.svg?style=flat)](http://cocoapods.org/pods/ImageSlideshow)
 
@@ -11,29 +12,41 @@ iOS / Swift image slideshow with circular scrolling, timer and full screen viewe
 
 ![](http://cl.ly/image/2v193I0G0h0Z/ImageSlideshow2.gif)
 
+
 This component is under development. Description and brief documentation will follow with future versions. The API will be subject of change.
 
 Roadmap for 1.0:
 - ~~Create test project~~
 - ~~Create CocoaPod~~
 - ~~Fix initial bugs~~
-- Polish API
-- Write brief documentation
+- ~~Polish API~~
+- Improve documentation
+- Improve the example project to demonstrate all the features
 - ~~*InputSource* subclass for *Alamofire* (yay!)~~
 
 ## Usage
 
 To run the example project, clone the repo, and run `pod install` from the Example directory first.
 
-## Requirements
+## Swift 2.3 and Swift 3 support
+
+Version 0.6 supports both Swift 2.2 and Swift 2.3. Code fully compatible with Swift 3 can be found in branch *swift-3* and will be oficially released in a future update.
 
 ## Installation
 
+### CocoaPods
 ImageSlideshow is available through [CocoaPods](http://cocoapods.org). To install
 it, simply add the following line to your Podfile:
 
 ```ruby
-pod 'ImageSlideshow', '~> 0.4'
+pod 'ImageSlideshow', '~> 0.6'
+```
+
+### Carthage
+To integrate ImageSlideshow into your Xcode project using Carthage, specify it in your Cartfile: 
+
+```ruby
+github "zvonicek/ImageSlideshow" ~> 0.6
 ```
 
 ## Usage
@@ -42,45 +55,59 @@ You can instantiate Slideshow either in Storyboard / Interface Builder, or in co
 
 ### Loading images
 
-Images can be set by calling ```setImageInputs``` method on ```ImageSlideshow``` instance. Argument is an array of *InputSource*s. By default you may use ```ImageSource``` which takes ```UIImage```, but you can easily subclass ```InputSource``` and support your own input source. 
+Images can be set by calling ```setImageInputs``` method on ```ImageSlideshow``` instance. Argument is an array of *InputSource*s. By default you may use ```ImageSource``` which takes ```UIImage```, but you can easily subclass ```InputSource``` and support your own input source.
 
 ```swift
-slideshow.setImageInputs([ImageSource(image: UIImage(named: "myImage"))!, ImageSource(image: UIImage(named: "myImage2"))!,])
+slideshow.setImageInputs([
+  ImageSource(image: UIImage(named: "myImage"))!, 
+  ImageSource(image: UIImage(named: "myImage2"))!
+])
 ```
 
-There are two more *InputSource*s available:
+There are three more *InputSource*s available:
 
 #### AlamofireImage
-
-*AlamofireSource* subspec allowing to load image from URL using *AlamofireImage*. To use this add the Alamofire subspec to your Podfile.
 
 ```ruby
 pod "ImageSlideshow/Alamofire"
 ``` 
 
-It is then possible to load image from URL by calling
-
+Used by creating a new `AlamofireSource` instance:
 ```swift
-AlamofireSource(urlString: "https://upload.wikimedia.org/wikipedia/commons/d/d5/Trencin_hdr_001.jpg")
+AlamofireSource(urlString: "https://images.unsplash.com/photo-1432679963831-2dab49187847?w=1080")
 ```
 
 #### AFNetworking
-
-*AFURL* subspec allowing to load image from URL using *AFNetworking*. To use this add the AFURL subspec to your Podfile.
 
 ```ruby
 pod "ImageSlideshow/AFURL"
 ``` 
 
-It is then possible to load image from URL by calling
-
+Used by creating a new `AFURLSource` instance:
 ```swift
-AFURLSource(urlString: "https://upload.wikimedia.org/wikipedia/commons/d/d5/Trencin_hdr_001.jpg")
+AFURLSource(urlString: "https://images.unsplash.com/photo-1432679963831-2dab49187847?w=1080")
+```
+
+#### SDWebImage
+
+```ruby
+pod "ImageSlideshow/SDWebImage"
+``` 
+
+#### Kingfisher
+
+```ruby
+pod "ImageSlideshow/Kingfisher"
+``` 
+
+Used by creating a new `KingfisherSource` instance:
+```swift
+KingfisherSource(urlString: "https://images.unsplash.com/photo-1432679963831-2dab49187847?w=1080")
 ```
 
 ### Configuration
 
-It is possible to configure behaviour by setting numerous properties: 
+Behaviour is configurable by those properties:
 
 - ```slideshowInterval``` - in case you want automatic slideshow, set up the interval between sliding to next picture
 - ```zoomEnabled``` - enables zooming
@@ -91,10 +118,10 @@ It is possible to configure behaviour by setting numerous properties:
 
 ### Full Screen view
 
-As seen on sample image and example project, you may also use full-scren view. For now there is a need to present the controller manually. 
+There is also a possibility to open full-screen image view using attached `FullScreenSlideshowViewController`. The controller is meant to be presented manually, as seen on the example:
 
 ```swift
-var transitionDelegate: ZoomAnimatedTransitioningDelegate?
+var slideshowTransitioningDelegate: ZoomAnimatedTransitioningDelegate?
 
 override func viewDidLoad() {
   ...
@@ -105,23 +132,23 @@ override func viewDidLoad() {
 func click() {
   let ctr = FullScreenSlideshowViewController()
   // called when full-screen VC dismissed and used to set the page to our original slideshow
-  ctr.pageSelected = {(page: Int) in
+  ctr.pageSelected = { page in
     self.slideshow.setScrollViewPage(page, animated: false)
   }
   
   // set the initial page
-  ctr.initialPage = slideshow.scrollViewPage
+  ctr.initialImageIndex = slideshow.scrollViewPage
   // set the inputs
   ctr.inputs = slideshow.images
-  self.transitionDelegate = ZoomAnimatedTransitioningDelegate(slideshowView: slideshow, slideshowController: ctr)
-  ctr.transitioningDelegate = self.transitionDelegate
+  self.slideshowTransitioningDelegate = ZoomAnimatedTransitioningDelegate(slideshowView: slideshow, slideshowController: ctr)
+  ctr.transitioningDelegate = self.slideshowTransitioningDelegate
   self.presentViewController(ctr, animated: true, completion: nil)
 }
 ```
 
 ## Author
 
-Petr Zvoníček, zvonicek@gmail.com
+Petr Zvoníček
 
 ## License
 
