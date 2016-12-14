@@ -51,7 +51,7 @@ public class ImageSlideshow: UIView, UIScrollViewDelegate {
         didSet {
             pageControl.currentPage = currentItemIndex;
             if let d = delegate {
-                d.currentPageDidChanged(currentPage)
+                d.currentPageDidChanged(currentItemIndex)
             }
         }
     }
@@ -164,7 +164,7 @@ public class ImageSlideshow: UIView, UIScrollViewDelegate {
         // To reverse effect from the automatic inset adjustment from the view controller's automaticallyAdjustsScrollViewInsets
         scrollView.contentInset = UIEdgeInsetsZero
                             
-        let scrollViewBottomPadding: CGFloat = self.pageControlPosition == .UnderScrollView ? 30.0 : 0.0
+        let scrollViewBottomPadding: CGFloat = self.pageControlPosition.bottomPadding
         scrollView.frame = CGRectMake(0, 0, self.frame.size.width, self.frame.size.height - scrollViewBottomPadding)
         scrollView.contentSize = CGSizeMake(scrollView.frame.size.width * CGFloat(scrollViewImages.count), scrollView.frame.size.height)
         
